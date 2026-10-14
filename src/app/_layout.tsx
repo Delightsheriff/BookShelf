@@ -28,11 +28,15 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <Tabs
         tabBar={(props) => <FloatingTabBar {...props} />}
+        // Keep every tab's SwiftUI host in the window: a detached host can come back with its
+        // last animation never committed, leaving the screen blank.
+        detachInactiveScreens={false}
         screenOptions={{
           headerShown: false,
           // No navigator fade: it intermittently stuck the incoming scene at opacity 0.
           // Each screen fades its own SwiftUI content in on focus instead.
           animation: 'none',
+          freezeOnBlur: false,
           sceneStyle: { backgroundColor: colors.background },
         }}>
         <Tabs.Screen name="index" />
