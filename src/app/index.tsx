@@ -1,98 +1,102 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Host, HStack, Image, Rectangle, ScrollView, Spacer, Text, VStack } from '@expo/ui/swift-ui';
+import {
+  animation,
+  clipShape,
+  font,
+  foregroundStyle,
+  frame,
+  offset,
+  opacity,
+  padding,
+  resizable,
+} from '@expo/ui/swift-ui/modifiers';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Cover, coverHeight } from '@/components/Cover';
+import { SearchRow } from '@/components/SearchRow';
+import { TOP_SELECTIONS } from '@/data/books';
+import { imageUri } from '@/lib/covers';
+import { colors, motion } from '@/theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+const GUTTER = 24;
+const GAP = 28;
 
 export default function HomeScreen() {
+  const { width } = useWindowDimensions();
+  const cover = Math.floor((width - GUTTER * 2 - GAP) / 2);
+  const [appeared, setAppeared] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const t = setTimeout(() => setAppeared(true), 120);
+      return () => {
+        clearTimeout(t);
+        setAppeared(false);
+      };
+    }, [])
+  );
+
+  const rows: string[][] = [];
+  for (let i = 0; i < TOP_SELECTIONS.length; i += 2) rows.push(TOP_SELECTIONS.slice(i, i + 2));
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <Host style={styles.host}>
+      <ScrollView showsIndicators={false}>
+        <VStack spacing={0} alignment="leading">
+          <HStack alignment="top" modifiers={[padding({ top: 16, horizontal: 18 })]}>
+            <Text modifiers={[font({ size: 20, weight: 'semibold' }), foregroundStyle(colors.text)]}>
+              {"Hi Audrey, let's sharpen your\nmind with great books."}
+            </Text>
+            <Spacer />
+            <Image uiImage={imageUri('avatar')} modifiers={[resizable(), frame({ width: 38, height: 38 }), clipShape('circle')]} />
+          </HStack>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <SearchRow placeholder="Search books" modifiers={[padding({ top: 16, horizontal: 18 })]} />
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+          <Text
+            modifiers={[
+              font({ size: 14, weight: 'medium' }),
+              foregroundStyle(colors.text),
+              padding({ top: 22, bottom: 18, leading: 18 }),
+            ]}>
+            Top selections for you
+          </Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+          <VStack spacing={26} modifiers={[padding({ horizontal: GUTTER })]}>
+            {rows.map((row, r) => (
+              <HStack
+                key={r}
+                spacing={GAP}
+                modifiers={[
+                  opacity(appeared ? 1 : 0),
+                  offset({ y: appeared ? 0 : 30 }),
+                  animation(motion.stagger(r), appeared),
+                ]}>
+                {row.map((bookId, c) => (
+                  <Cover
+                    key={bookId}
+                    bookId={bookId}
+                    width={cover}
+                    height={coverHeight(cover)}
+                    radius={9}
+                    border={3}
+                    rotation={c === 0 ? -2 : 2}
+                    elevation="high"
+                  />
+                ))}
+              </HStack>
+            ))}
+          </VStack>
+
+          <Rectangle modifiers={[frame({ height: 120 }), opacity(0)]} />
+        </VStack>
+      </ScrollView>
+    </Host>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
+  host: { flex: 1, backgroundColor: colors.background },
 });
