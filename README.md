@@ -22,7 +22,7 @@ LANG=en_US.UTF-8 npx expo run:ios
 | `src/app/collections.tsx` | List ⇄ detail state machine (`closed → lift → fly → open → land → return`) |
 | `src/features/collections/HeroLayer.tsx` | The three covers that fly between the card fan and the shelf |
 | `src/features/collections/Shelf.tsx` | Looping, snapping shelf on the wood plank |
-| `src/features/collections/CollectionDetail.tsx` | Detail sheet, staggered reveal, pull-down to dismiss |
+| `src/features/collections/CollectionDetail.tsx` | Detail sheet, staggered reveal; back button, grabber tap or pull-down return to the list |
 | `scripts/generate-covers.py` | Generates the original placeholder cover art in `assets/covers` |
 | `plugins/with-scene-lifecycle.js` | Adopts the UIKit scene life cycle the iOS 27 SDK requires (backport of the SDK 58 template) |
 

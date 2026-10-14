@@ -1,16 +1,22 @@
 /* eslint-disable react-hooks/refs */
-import { Capsule, HStack, Rectangle, ScrollView, Spacer, Text, VStack, ZStack } from '@expo/ui/swift-ui';
+import { Button, Capsule, HStack, Image, Rectangle, ScrollView, Spacer, Text, VStack, ZStack } from '@expo/ui/swift-ui';
 import {
+  accessibilityLabel,
   animation,
+  background,
+  buttonStyle,
   font,
   foregroundStyle,
   frame,
   ignoreSafeArea,
+  lineLimit,
   offset,
   onScrollPhaseChange,
   onTapGesture,
   opacity,
   padding,
+  shadow,
+  shapes,
   useScrollGeometryChange,
 } from '@expo/ui/swift-ui/modifiers';
 import { useRef } from 'react';
@@ -97,13 +103,33 @@ export function CollectionDetail({ collection, contentIn, heroHidden, onHeroGeom
             />
           </HStack>
 
-          {/* Header — morphs from the card's title */}
-          <VStack spacing={4} modifiers={[frame({ maxWidth: Infinity }), padding({ top: 14 }), ...reveal(-8, 0.02)]}>
-            <Text modifiers={[font({ size: 20, weight: 'semibold' }), foregroundStyle(colors.text)]}>
-              {collection.title}
-            </Text>
-            <Text modifiers={[font({ size: 14 }), foregroundStyle(colors.secondary)]}>{collection.subtitle}</Text>
-          </VStack>
+          {/* Header: back button on the leading edge, title centred. */}
+          <ZStack
+            modifiers={[frame({ maxWidth: Infinity }), padding({ top: 14, horizontal: 18 }), ...reveal(-8, 0.02)]}>
+            <VStack spacing={4} modifiers={[padding({ horizontal: 52 })]}>
+              <Text modifiers={[font({ size: 20, weight: 'semibold' }), foregroundStyle(colors.text), lineLimit(1)]}>
+                {collection.title}
+              </Text>
+              <Text modifiers={[font({ size: 14 }), foregroundStyle(colors.secondary), lineLimit(1)]}>
+                {collection.subtitle}
+              </Text>
+            </VStack>
+            <HStack modifiers={[frame({ maxWidth: Infinity })]}>
+              <Button onPress={onClose} modifiers={[buttonStyle('plain'), accessibilityLabel('Back to Collections')]}>
+                <Image
+                  systemName="chevron.left"
+                  size={16}
+                  color={colors.text}
+                  modifiers={[
+                    frame({ width: 40, height: 40 }),
+                    background(colors.field, shapes.circle()),
+                    shadow({ radius: 6, y: 2, color: '#0000000F' }),
+                  ]}
+                />
+              </Button>
+              <Spacer />
+            </HStack>
+          </ZStack>
 
           <SearchRow
             placeholder="Search this collection"
