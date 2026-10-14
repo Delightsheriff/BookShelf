@@ -1,56 +1,38 @@
-# Welcome to your Expo app 👋
+# BookShelf
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A recreation of the "Collections" book app concept (Klickpin pin 852728510751447010) in Expo SDK 57,
+with every screen drawn by native SwiftUI through `@expo/ui`. iOS only. See [PLAN.md](PLAN.md) for the
+original breakdown of the video.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run
 
 ```bash
-npm run reset-project
+npm install
+LANG=en_US.UTF-8 npx expo run:ios
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+`LANG` must be UTF-8 or CocoaPods fails during `pod install`.
 
-### Other setup steps
+## Where things live
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| Path | What |
+|------|------|
+| `src/app/_layout.tsx` | Tabs (cross-fade) + preloads cover images |
+| `src/components/FloatingTabBar.tsx` | Dark floating capsule; the selection disc glides with `matchedGeometryEffect` |
+| `src/app/collections.tsx` | List ⇄ detail state machine (`closed → lift → fly → open → land → return`) |
+| `src/features/collections/HeroLayer.tsx` | The three covers that fly between the card fan and the shelf |
+| `src/features/collections/Shelf.tsx` | Looping, snapping shelf on the wood plank |
+| `src/features/collections/CollectionDetail.tsx` | Detail sheet, staggered reveal, pull-down to dismiss |
+| `scripts/generate-covers.py` | Generates the original placeholder cover art in `assets/covers` |
+| `plugins/with-scene-lifecycle.js` | Adopts the UIKit scene life cycle the iOS 27 SDK requires (backport of the SDK 58 template) |
 
-## Learn more
+## Expo UI notes learned the hard way
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Expo UI animates **modifier changes** inside `animation(…, value)`, but not views being inserted or
+  removed. That rules out SwiftUI's `matchedGeometryEffect` across two screens, so the hero is a
+  dedicated overlay whose frame, offset and rotation are animated.
+- A view whose **modifier list changes shape** is rebuilt, not animated. Keep the chain identical and
+  vary only values (see `Cover.tsx`).
+- `onGeometryChange` reports global frames; the overlay subtracts its own origin.
+- `scrollPosition`'s initial value is ignored, and setting the same value again does nothing. The shelf
+  starts at `null` and jumps to the middle copy in `onAppear`.
