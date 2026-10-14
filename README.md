@@ -5,9 +5,10 @@ SwiftUI through `@expo/ui`. iOS only. See [PLAN.md](PLAN.md) for the original br
 
 ## Demo
 
-<p align="center"><img src="docs/media/demo.gif" width="320" alt="BookShelf demo: tab switch, opening a collection, looping shelf, back button and pull-to-dismiss"></p>
+<p align="center"><img src="docs/media/demo.gif" width="360" alt="BookShelf demo: tab switch, opening a collection, looping shelf, back button and pull-to-dismiss"></p>
 
-Full-quality recording from the iOS 27 simulator: [docs/media/demo.mp4](docs/media/demo.mp4)
+Full-quality recording from the iOS 27 simulator: [docs/media/demo.mp4](docs/media/demo.mp4). To frame a new
+recording the same way, run `scripts/frame-recording.sh <recording.mp4>`.
 
 ![Collections list, Spiritual detail, and the shelf after looping](docs/media/screenshots.jpg)
 
