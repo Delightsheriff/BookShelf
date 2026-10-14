@@ -65,7 +65,7 @@ export default function CollectionsScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const t = setTimeout(() => setAppeared(true), 120);
+      const t = setTimeout(() => setAppeared(true), 30);
       return () => {
         clearTimeout(t);
         setAppeared(false);
@@ -167,7 +167,10 @@ export default function CollectionsScreen() {
             opacity(listDimmed ? 0 : 1),
             animation(listDimmed ? motion.hero : motion.heroClose, listDimmed),
           ]}>
-          <VStack spacing={0} alignment="leading" modifiers={[padding({ horizontal: 18 })]}>
+          <VStack
+            spacing={0}
+            alignment="leading"
+            modifiers={[padding({ horizontal: 18 }), opacity(appeared ? 1 : 0), animation(motion.screenIn, appeared)]}>
             <Text
               modifiers={[
                 font({ size: 20, weight: 'semibold' }),

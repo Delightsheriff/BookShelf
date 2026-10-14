@@ -25,6 +25,7 @@ export const motion = {
   hero: Animation.spring({ response: 0.52, dampingFraction: 0.84 }),
   heroClose: Animation.spring({ response: 0.48, dampingFraction: 0.88 }),
   fadeIn: Animation.easeOut({ duration: 0.28 }),
+  screenIn: Animation.easeOut({ duration: 0.25 }),
   reveal: Animation.spring({ response: 0.5, dampingFraction: 0.9 }),
   fadeOut: Animation.easeOut({ duration: 0.16 }),
   stagger: (i: number) => Animation.spring({ response: 0.5, dampingFraction: 0.82 }).delay(0.06 + i * 0.07),

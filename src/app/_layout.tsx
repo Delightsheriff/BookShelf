@@ -30,7 +30,9 @@ export default function RootLayout() {
         tabBar={(props) => <FloatingTabBar {...props} />}
         screenOptions={{
           headerShown: false,
-          animation: 'fade',
+          // No navigator fade: it intermittently stuck the incoming scene at opacity 0.
+          // Each screen fades its own SwiftUI content in on focus instead.
+          animation: 'none',
           sceneStyle: { backgroundColor: colors.background },
         }}>
         <Tabs.Screen name="index" />

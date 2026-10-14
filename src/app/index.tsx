@@ -30,12 +30,12 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const t = setTimeout(() => setAppeared(true), 120);
+      const t = setTimeout(() => setAppeared(true), 30);
       return () => {
         clearTimeout(t);
         setAppeared(false);
       };
-    }, [])
+    }, []),
   );
 
   const rows: string[][] = [];
@@ -44,13 +44,19 @@ export default function HomeScreen() {
   return (
     <Host style={styles.host}>
       <ScrollView showsIndicators={false}>
-        <VStack spacing={0} alignment="leading">
+        <VStack
+          spacing={0}
+          alignment="leading"
+          modifiers={[opacity(appeared ? 1 : 0), animation(motion.screenIn, appeared)]}>
           <HStack alignment="top" modifiers={[padding({ top: 16, horizontal: 18 })]}>
             <Text modifiers={[font({ size: 20, weight: 'semibold' }), foregroundStyle(colors.text)]}>
               {"Hi Audrey, let's sharpen your\nmind with great books."}
             </Text>
             <Spacer />
-            <Image uiImage={imageUri('avatar')} modifiers={[resizable(), frame({ width: 38, height: 38 }), clipShape('circle')]} />
+            <Image
+              uiImage={imageUri('avatar')}
+              modifiers={[resizable(), frame({ width: 38, height: 38 }), clipShape('circle')]}
+            />
           </HStack>
 
           <SearchRow placeholder="Search books" modifiers={[padding({ top: 16, horizontal: 18 })]} />
